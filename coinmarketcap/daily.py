@@ -72,17 +72,13 @@ with db.get_connection() as conn:
 
         url = data_url(_id, time_start, time_end)
         r = requests.get(url)
-        try:
-            data = r.json()['data']
-            if len(data) == 0:
-                continue
-            first_row = list(data.values())[0]
-            if not ('BTC' in first_row or 'ETH' in first_row or 'USD' in first_row):
-                continue
-        except:
-            print(url)
-            print(r.text)
-            break
+        
+        data = r.json()['data']
+        if len(data) == 0:
+            continue
+        first_row = list(data.values())[0]
+        if not ('BTC' in first_row or 'ETH' in first_row or 'USD' in first_row):
+            continue
 
         values = (_id, symbol, json.dumps(data), time_end,)
         db.exec(conn, 'INSERT INTO coinmarketcap_daily_data (cmc_id, symbol, data, timestamp) VALUES (%s, %s, %s, %s)',
