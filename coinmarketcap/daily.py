@@ -51,10 +51,13 @@ def get_last_scraped(conn):
             for x in db.all(conn, 'SELECT cmc_id, max(timestamp) as ts FROM coinmarketcap_daily_data GROUP BY cmc_id')}
 
 
-with open('cryptocurrency_map.json') as f:
-    id_map = json.load(f)
+def get_id_map(conn):
+    x = db.one(conn, 'select * from coinmarketcap_map_data order by dt desc')
+    return x['data']
+
 
 with db.get_connection() as conn:
+    id_map = get_id_map(conn)
     # scrape data
     scraped = get_last_scraped(conn)
     for row in tqdm(id_map):
@@ -67,12 +70,12 @@ with db.get_connection() as conn:
         else:
             time_start = arrow.get('2013-04-28').timestamp
 
-        if time_end - 60*60*24 < scraped[_id]:
+        if time_end - 60 * 60 * 24 < scraped[_id]:
             continue
 
         url = data_url(_id, time_start, time_end)
         r = requests.get(url)
-        
+
         data = r.json()['data']
         if len(data) == 0:
             continue
@@ -117,4 +120,4 @@ with db.get_connection() as conn:
         test(fixed)
 
         db.exec(conn, 'UPDATE coinmarketcap_daily_data SET fixed_data = %s WHERE id = %s;',
-                     (json.dumps(fixed), row['id'],))
+                (json.dumps(fixed), row['id'],))
