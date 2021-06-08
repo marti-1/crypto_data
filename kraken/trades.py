@@ -7,6 +7,7 @@ from pathlib import Path
 import sys
 import db
 from psycopg2.extras import DictCursor
+import time
 
 config = cfg.load()
 
@@ -50,7 +51,7 @@ if __name__ == '__main__':
     parser.add_argument('--since', type=int, default=arrow.get('2015-01-01').timestamp)
     parser.add_argument('--to', type=int, default=arrow.get().timestamp)
 
-    args = parser.parse_args(['XETHZUSD', '--db'])
+    args = parser.parse_args()
 
     to = args.to
     since = get_since_param(args.pair, args.db, args.since)
@@ -77,3 +78,5 @@ if __name__ == '__main__':
         since = int(trades[-1][2])
         if since >= to:
             break
+
+        time.sleep(2)
