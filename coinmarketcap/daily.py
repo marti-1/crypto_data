@@ -70,7 +70,7 @@ with db.get_connection() as conn:
         else:
             time_start = arrow.get('2013-04-28').timestamp
 
-        if time_end - 60 * 60 * 24 < scraped[_id]:
+        if _id in scraped and time_end - 60 * 60 * 24 < scraped[_id]:
             continue
 
         url = data_url(_id, time_start, time_end)
