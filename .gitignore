@@ -4,3 +4,4 @@ __pycache__/
 *.csv
 logs/
 kraken/output
+*.log
