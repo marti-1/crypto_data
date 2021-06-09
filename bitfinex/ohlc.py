@@ -10,8 +10,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('pair', type=str)
 
-    # args = parser.parse_args(['tAMPUSD'])
-    args = parser.parse_args()
+    args = parser.parse_args(['tETHUSD'])
+    # args = parser.parse_args()
     pair = args.pair.upper()
     url = f"https://api-pub.bitfinex.com/v2/candles/trade:1D:{args.pair}/hist?limit=10000"
     r = requests.get(url)

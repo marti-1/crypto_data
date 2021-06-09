@@ -6,7 +6,7 @@ host = 'https://ftx.com/api'
 
 market_name = 'AMPL/USD'
 # daily
-resolution = 86400
+resolution = 60*60
 url = f"{host}/markets/{market_name}/candles?resolution={resolution}&limit=5000"
 r = requests.get(url).json()
 
@@ -21,4 +21,4 @@ for row in r['result']:
         "volume": row['volume']
     }, ignore_index=True)
 df = df.astype({"dt": int})
-df.to_csv('ampl_usd_ohlc_1d.csv', index=False, line_terminator='\n')
+df.to_csv('amplusd_ohlc_1h.csv', index=False, line_terminator='\n')
