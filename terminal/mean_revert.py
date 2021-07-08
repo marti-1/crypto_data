@@ -15,7 +15,7 @@ if __name__ == '__main__':
     parser.add_argument('--dt', type=int, default=86400)
     parser.add_argument('--n', type=int, default=100)
     parser.add_argument('--bottom', type=float, default=None)
-    args = parser.parse_args(['XETHZUSD', '--n=100', '--bottom=0.6'])
+    args = parser.parse_args()
     with db.get_connection() as conn:
         rows = db.all(conn, f"""
             select 

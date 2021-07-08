@@ -8,6 +8,7 @@ import sys
 import db
 from psycopg2.extras import DictCursor
 import time
+import csv
 
 config = cfg.load()
 
@@ -44,11 +45,19 @@ def get_trades(pair, since):
     return acc
 
 
+def row2csv(row):
+    return ','.join([str(x) for x in row])
+
+
+def rows2csv(rows):
+    return "\n".join([row2csv(x) for x in rows])
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('pair', type=str)
     parser.add_argument('--db', dest='db', action='store_true')
-    parser.add_argument('--since', type=int, default=arrow.get('2015-01-01').timestamp)
+    parser.add_argument('--since', type=float, default=arrow.get('2015-01-01').timestamp)
     parser.add_argument('--to', type=int, default=arrow.get().timestamp)
 
     args = parser.parse_args()
@@ -59,8 +68,11 @@ if __name__ == '__main__':
     if since >= to:
         sys.exit()
 
+    if not args.db:
+        csvwriter = csv.writer(sys.stdout)
+        csvwriter.writerow('price,volume,time,buy_sell,market_limit,misc'.split(','))
+
     while True:
-        print(since)
         trades = get_trades(args.pair, since)
         if trades is None:
             break
@@ -74,7 +86,7 @@ if __name__ == '__main__':
                 conn.commit()
                 cur.close()
         else:
-            pass
+            csvwriter.writerows(trades)
         since = int(trades[-1][2])
         if since >= to:
             break
